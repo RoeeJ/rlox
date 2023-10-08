@@ -1,0 +1,4 @@
+var name = 'Roee';
+var age = 2**10;
+print name;
+print age;
