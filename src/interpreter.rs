@@ -1,4 +1,3 @@
-
 use crate::{
     ast::{Expression, LoxError, Token, TokenLiteral},
     stmt::Statement,
@@ -24,14 +23,33 @@ impl Interpreter {
                 }
             }
             Statement::Print(ex) => {
-                if let Expression::Literal(lit) = &ex {
-                    if let Some(var) = self.variables.iter().find(|v| v.name.literal == *lit) {
-                        println!("{}", var.value);
-                        return Ok(());
+                match ex {
+                    Expression::Grouping(expr) => {
+                        if let Ok(lit) = expr.evaluate() {
+                            println!("{}", lit);
+                        }
                     }
-                } else if let Err(e) = ex.evaluate() {
-                    return Err(LoxError::ParseError(e));
+                    Expression::Literal(lit) => {
+                        if let Some(var) = self.variables.iter().find(|v| v.name.literal == lit) {
+                            println!("{}", var.value);
+                        }
+                    }
+                    x => {
+                        if let Ok(lit) = x.evaluate() {
+                            println!("{}", lit);
+                        }
+                        // dbg!(&x.evaluate());
+                    }
                 }
+                //else {
+                //     match ex.evaluate() {
+                //         Err(e) => return Err(LoxError::ParseError(e)),
+                //         Ok(lit) => {
+                //             println!("{}", lit.to_string());
+                //             return Ok(());
+                //         }
+                //     }
+                // }
             }
             Statement::Var(name, initializer) => {
                 if let Some(val) = initializer {

@@ -1,4 +1,19 @@
-use crate::{ast::TokenLiteral, stmt::Statement, interpreter::{self, Interpreter}};
+
+
+#[test]
+fn print() {
+    use crate::parser::Parser;
+    let mut parser = Parser::new();
+    match parser.load_file("./tests/print.lox".to_string()) {
+        Ok(stmts) => {
+            dbg!(&stmts);
+            assert_eq!(stmts.len(), 3);
+        }
+        Err(e) => {
+            dbg!(&e);
+        }
+    }
+}
 
 #[test]
 fn exponent() {

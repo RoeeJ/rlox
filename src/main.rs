@@ -49,8 +49,8 @@ fn run_repl() -> Result<(), LoxError> {
             .expect("Failed to read line from stdin");
         line = line.trim().to_string();
         match parser.load(line) {
-            Ok(expr) => {
-                interpreter.interpret(expr);
+            Ok(stmts) => {
+                interpreter.interpret(stmts);
             }
             Err(err) => {
                 eprintln!("> {}", err);

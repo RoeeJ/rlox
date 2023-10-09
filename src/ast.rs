@@ -219,7 +219,7 @@ impl Expression {
         };
     }
 
-    fn check_number_operand(&self, operator: &Token, operand: &TokenLiteral) -> bool {
+    fn check_number_operand(&self, _operator: &Token, operand: &TokenLiteral) -> bool {
         match operand {
             TokenLiteral::Integer(_) | TokenLiteral::Float(_) => true,
             _ => false,

@@ -1,0 +1,4 @@
+var name = 'roee';
+print name;
+print 5+5;
+print roee;
