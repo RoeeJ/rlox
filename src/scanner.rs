@@ -1,4 +1,4 @@
-use crate::ast::{LoxError, Token, TokenLiteral, TokenType, IDENT_MAP};
+use crate::ast::{keyword_token_type, LoxError, Token, TokenLiteral, TokenType};
 
 #[derive(Debug, Clone)]
 pub struct Scanner {
@@ -197,14 +197,11 @@ impl Scanner {
 
         let ident: String = self.source[self.start..self.current].iter().collect();
 
-        match IDENT_MAP.get(&ident) {
-            Some(idm) => {
-                self.add_token(*idm, TokenLiteral::Empty);
-            }
-            None => {
-                self.add_token(TokenType::IDENTIFIER,TokenLiteral::String(ident));
-            }
-        };
+        if let Some(idm) = keyword_token_type(&ident) {
+            self.add_token(idm, TokenLiteral::Empty);
+        } else {
+            self.add_token(TokenType::IDENTIFIER, TokenLiteral::String(ident));
+        }
     }
 
     fn string(&mut self, c: char) {

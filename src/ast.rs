@@ -4,26 +4,30 @@ use std::{
     ops::{Add, Div, Mul, Sub},
 };
 
-pub const IDENT_MAP: phf::Map<&str, TokenType> = phf::phf_map! {
-    "and" => TokenType::AND,
-    "class" => TokenType::CLASS,
-    "else" => TokenType::ELSE,
-    "false" => TokenType::FALSE,
-    "for" => TokenType::FOR,
-    "fun" => TokenType::FUN,
-    "if" => TokenType::IF,
-    "nil" => TokenType::NIL,
-    "or" => TokenType::OR,
-    "print" => TokenType::PRINT,
-    "return" => TokenType::RETURN,
-    "super" => TokenType::SUPER,
-    "this" => TokenType::THIS,
-    "true" => TokenType::TRUE,
-    "var" => TokenType::VAR,
-    "const" => TokenType::CONST,
-    "while" => TokenType::WHILE,
-    "dump" => TokenType::DUMP,
-};
+/// Return the [`TokenType`] for a reserved keyword if `ident` is a keyword.
+pub fn keyword_token_type(ident: &str) -> Option<TokenType> {
+    match ident {
+        "and" => Some(TokenType::AND),
+        "class" => Some(TokenType::CLASS),
+        "else" => Some(TokenType::ELSE),
+        "false" => Some(TokenType::FALSE),
+        "for" => Some(TokenType::FOR),
+        "fun" => Some(TokenType::FUN),
+        "if" => Some(TokenType::IF),
+        "nil" => Some(TokenType::NIL),
+        "or" => Some(TokenType::OR),
+        "print" => Some(TokenType::PRINT),
+        "return" => Some(TokenType::RETURN),
+        "super" => Some(TokenType::SUPER),
+        "this" => Some(TokenType::THIS),
+        "true" => Some(TokenType::TRUE),
+        "var" => Some(TokenType::VAR),
+        "const" => Some(TokenType::CONST),
+        "while" => Some(TokenType::WHILE),
+        "dump" => Some(TokenType::DUMP),
+        _ => None,
+    }
+}
 
 #[derive(Debug, PartialEq)]
 pub enum LoxError {
@@ -72,6 +76,9 @@ impl From<ParserError> for LoxError {
 
 #[derive(Debug, Clone)]
 pub enum Expression {
+    Assign { name: Token, value: Box<Expression> },
+    Logical { left: Box<Expression>, operator: Token, right: Box<Expression> },
+    Call { callee: Box<Expression>, paren: Token, arguments: Vec<Expression> },
     Binary {
         left: Box<Expression>,
         operator: Token,
@@ -215,7 +222,9 @@ impl Expression {
             Expression::Literal(lit) => Ok(lit.clone()),
             Expression::Empty => Ok(TokenLiteral::Empty),
             Expression::Variable(token) => Ok(token.literal.clone()),
-
+            Expression::Assign { .. }
+            | Expression::Logical { .. }
+            | Expression::Call { .. } => Err(ParserError::UnsupportedAction),
         };
     }
 

@@ -1,13 +1,17 @@
-
-
+#![allow(unused_imports)]
+use crate::{
+    ast::TokenLiteral,
+    interpreter::Interpreter,
+    parser::Parser,
+    stmt::Statement,
+};
 #[test]
 fn print() {
-    use crate::parser::Parser;
     let mut parser = Parser::new();
     match parser.load_file("./tests/print.lox".to_string()) {
         Ok(stmts) => {
             dbg!(&stmts);
-            assert_eq!(stmts.len(), 3);
+            assert_eq!(stmts.len(), 4);
         }
         Err(e) => {
             dbg!(&e);
@@ -17,7 +21,6 @@ fn print() {
 
 #[test]
 fn exponent() {
-    use crate::parser::Parser;
     let mut parser = Parser::new();
     match parser.load("5**5;".to_string()) {
         Ok(stmts) => {
@@ -36,7 +39,6 @@ fn exponent() {
 
 #[test]
 fn mul() {
-    use crate::parser::Parser;
     let mut parser = Parser::new();
     match parser.load("5*5;".to_string()) {
         Ok(stmts) => {
@@ -55,7 +57,6 @@ fn mul() {
 
 #[test]
 fn add() {
-    use crate::parser::Parser;
     let mut parser = Parser::new();
     match parser.load("5+5;".to_string()) {
         Ok(stmts) => {
@@ -74,7 +75,6 @@ fn add() {
 
 #[test]
 fn sub() {
-    use crate::parser::Parser;
     let mut parser = Parser::new();
     match parser.load("5-5;".to_string()) {
         Ok(stmts) => {
@@ -93,7 +93,6 @@ fn sub() {
 
 #[test]
 fn str() {
-    use crate::parser::Parser;
     let mut parser = Parser::new();
     match parser.load("'test';".to_string()) {
         Ok(stmts) => {
@@ -112,7 +111,6 @@ fn str() {
 
 #[test]
 fn str_concat() {
-    use crate::parser::Parser;
     let mut parser = Parser::new();
     match parser.load("'Hello' + ' ' + 'World!';".to_string()) {
         Ok(stmts) => {
@@ -131,7 +129,6 @@ fn str_concat() {
 
 #[test]
 fn str_plus_num() {
-    use crate::parser::Parser;
     let mut parser = Parser::new();
 
     match parser.load("'Hello' + 5;".to_string()) {
@@ -164,7 +161,6 @@ fn str_plus_num() {
 }
 #[test]
 fn variables() {
-    use crate::parser::Parser;
     let mut parser = Parser::new();
     let mut interpreter = Interpreter::new();
     match parser.load_file("./tests/variables.lox".to_string()) {
@@ -177,4 +173,34 @@ fn variables() {
             dbg!(&e);
         }
     }
+}
+
+#[test]
+fn function_call() {
+    use crate::{parser::Parser, interpreter::Interpreter, stmt::Statement, ast::{Expression, TokenLiteral}};
+    let mut parser = Parser::new();
+    let stmts = parser
+        .load("fun add(a, b){ return a + b; } add(1, 2);".to_string())
+        .expect("failed to parse");
+    let mut interpreter = Interpreter::new();
+    // first statement defines the function
+    interpreter.interpret(vec![stmts[0].clone()]);
+    if let Statement::Expression(expr) = &stmts[1] {
+        let val = interpreter.evaluate(expr).expect("failed to eval");
+        assert_eq!(TokenLiteral::Integer(3), val);
+    } else {
+        panic!("unexpected statement");
+    }
+}
+
+#[test]
+fn while_loop() {
+    use crate::{parser::Parser, interpreter::Interpreter, ast::TokenLiteral};
+    let mut parser = Parser::new();
+    let stmts = parser
+        .load("var a = 0; while (a < 3) { a = a + 1; }".to_string())
+        .expect("failed to parse");
+    let mut interpreter = Interpreter::new();
+    interpreter.interpret(stmts);
+    assert_eq!(interpreter.get_var("a"), Some(TokenLiteral::Integer(3)));
 }
