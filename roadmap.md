@@ -263,4 +263,69 @@ This document outlines potential features that could be added to the Lox languag
 ### 7.2. Namespaces
 - While modules would provide file-level namespacing, consider if a more general `namespace` keyword or construct is needed for grouping code within a single file or for more complex organizational structures. This might be less critical if modules are powerful enough.
 ## 8. Standard Library
+The Lox language as defined in "Crafting Interpreters" has a deliberately minimal standard library (`print` statement and `clock()` function). A usable language would require significant expansion here.
+
+### 8.1. String Manipulation
+- **Core Functions:** `length`, `substring`/`slice`, `charAt`/`codePointAt`, `indexOf`/`find`, `startsWith`, `endsWith`, `trim`, `toUpperCase`, `toLowerCase`, `replace`, `split`, `join`.
+- **Formatting:** C-style `sprintf` or Python-style f-string capabilities.
+
+### 8.2. Extended Mathematical Functions
+- **Trigonometry:** `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `atan2`.
+- **Exponents & Logarithms:** `pow`, `sqrt`, `exp`, `log`, `log10`.
+- **Rounding & Absolute Value:** `round`, `floor`, `ceil`, `abs`, `trunc`.
+- **Random Numbers:** `random()` (to get a float between 0 and 1), `randomInt(min, max)`.
+- **Constants:** `Math.PI`, `Math.E` (could be part of static properties on a `Math` object/module).
+
+### 8.3. File System I/O
+- **Reading Files:** `File.readText(path)`, `File.readBytes(path)`.
+- **Writing Files:** `File.writeText(path, content)`, `File.writeBytes(path, content)`.
+- **File System Operations:** `File.exists(path)`, `File.isDirectory(path)`, `File.isFile(path)`, `File.delete(path)`, `File.rename(path, newPath)`, `Directory.create(path)`, `Directory.list(path)`.
+- **Path Manipulation:** Joining paths, getting base names, directory names.
+- **Standard Streams:** Access to `stdin`, `stdout`, `stderr`.
+
+### 8.4. User Input (Console)
+- `readLine()` or `input()` to get a line of text from the user.
+
+### 8.5. Data Structure Manipulation
+- If built-in Lists and Maps are added (see Section 3), provide rich APIs for them:
+  - **Lists:** `sort`, `reverse`, `map`, `filter`, `reduce`, `forEach`, `isEmpty`, `contains`, `insert`, `removeAt`, etc.
+  - **Maps:** `keys`, `values`, `isEmpty`, `containsValue`, `forEach`, etc.
+
+### 8.6. Date and Time Operations
+- Constructing date/time objects.
+- Formatting and parsing date/time strings.
+- Getting current time, timestamps.
+- Time differences, arithmetic.
+
+### 8.7. Type Conversion
+- Explicit functions for converting between types, e.g., `toNumber(string)`, `toString(value)`, `toBoolean(value)`.
+
+### 8.8. Networking
+- Basic HTTP client: `Http.get(url)`, `Http.post(url, body, headers)`.
+- Lower-level TCP/UDP socket support might be considered for more advanced use cases.
+
+### 8.9. Environment Access
+- **Command-line Arguments:** Access to arguments passed to the script.
+- **Environment Variables:** Get and possibly set environment variables.
+- **Exiting:** `exit(code)` function.
+
+### 8.10. JSON Support
+- `Json.parse(string)` and `Json.stringify(value)` for working with JSON data.
+
+### 8.11. Regular Expressions
+- A way to define and use regular expressions for pattern matching in strings.
 ## 9. Miscellaneous
+### 9.1. Concurrency
+- Explore options for concurrent programming, such as threads, async/await, or actor models. This is a large feature and would require significant design effort.
+
+### 9.2. Metaprogramming / Reflection
+- Consider features that allow Lox code to inspect and modify itself or its own structures at runtime (e.g., inspecting class fields, dynamically calling methods).
+
+### 9.3. Package Management
+- If the language grows and a community develops, a package manager for sharing and distributing Lox libraries/modules would be essential.
+
+### 9.4. Foreign Function Interface (FFI)
+- A way to call functions written in other languages (e.g., C) from Lox, and vice-versa.
+
+### 9.5. Debugging Support
+- Features to aid debugging, such as a built-in debugger or hooks for external debuggers.
